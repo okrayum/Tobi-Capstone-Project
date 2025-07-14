@@ -15,17 +15,21 @@ class StorageManager:
         self.data_dir.mkdir(exist_ok=True)
         
     def save_weather(self, weather_data: Dict) -> None:
-        """Save weather data to file"""
+        # """Save weather data to file"""
         filename = self.data_dir / "weather_history.csv"
-        
+        file_exists = filename.exists()
+
         with open(filename, 'a', newline='') as f:
             writer = csv.writer(f)
+            if not file_exists:
+                writer.writerow(["Timestamp", "City", "Temperature (C)", "Description"])
             writer.writerow([
                 datetime.now().isoformat(),
                 weather_data.get('name', ''),
                 weather_data.get('main', {}).get('temp', ''),
                 weather_data.get('weather', [{}])[0].get('description', '')
-            ])
+        ])
+
     
     def load_history(self, limit: int = 10) -> List[Dict]:
         """Load recent weather history"""
